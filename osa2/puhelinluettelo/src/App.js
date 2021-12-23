@@ -97,7 +97,7 @@ const App = () => {
   }
  
   const handleRemovalOf = (id) => {
-    const url = `http://localhost:3001/persons/${id}`
+    const url = `http://localhost:3001/api/persons/${id}`
     const deletedPerson = persons.find(n => n.id === id)
 
     if (window.confirm(`Delete ${deletedPerson.name}`)) {
