@@ -47,6 +47,25 @@ describe('addition of a new blog', () => {
     const titles = blogsAtEnd.map(n => n.title)
     expect(titles).toContain('Keissiiiii')
   })
+
+  test('set likes to zero if undefined', async() => {
+    const newBlog = {
+      title: 'Keissiiiii',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const lastElementLikes = blogsAtEnd[blogsAtEnd.length - 1].likes
+
+    expect(lastElementLikes).toBe(0)
+
+  })
 })
 
 afterAll(() => {
