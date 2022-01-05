@@ -16,12 +16,36 @@ describe('when there is initially some blogs saved', () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
-  test('field id is id', async () => {
+  test('identifier field is called id', async () => {
     const response = await api.get('/api/blogs')
 
     const fetchIds = response.body.map(r => r.id)
 
     expect((fetchIds)).toBeDefined()
+  })
+})
+
+describe('addition of a new blog', () => {
+  test('length grows with one', async() => {
+    const newBlog = {
+      title: 'Keissiiiii',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 1,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+    const titles = blogsAtEnd.map(n => n.title)
+    expect(titles).toContain('Keissiiiii')
   })
 })
 
