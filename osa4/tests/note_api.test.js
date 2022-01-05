@@ -64,7 +64,17 @@ describe('addition of a new blog', () => {
     const lastElementLikes = blogsAtEnd[blogsAtEnd.length - 1].likes
 
     expect(lastElementLikes).toBe(0)
+  })
 
+  test('fails if missing fields title and url', async() => {
+    const newBlog = {
+      author: 'Juse'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
   })
 })
 
