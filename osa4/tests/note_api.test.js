@@ -15,6 +15,14 @@ describe('when there is initially some blogs saved', () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
+
+  test('field id is id', async () => {
+    const response = await api.get('/api/blogs')
+
+    const fetchIds = response.body.map(r => r.id)
+
+    expect((fetchIds)).toBeDefined()
+  })
 })
 
 afterAll(() => {
