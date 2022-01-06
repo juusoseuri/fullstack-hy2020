@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/blogs/61d30d99a697eb6c42a4ec3c
+Content-Type: application/json
+
+{
+  "title": "Hyvä keissi",
+  "author": "Juuso",
+  "url": "Joku url",
+  "likes": 10
+}
