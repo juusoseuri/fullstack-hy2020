@@ -1,41 +1,80 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
+const Blog = require('../models/blog')
 const helper = require('./test_helper')
 const api = supertest(app)
-const bcrypt = require('bcrypt')
-const User = require('../models/user')
 
-describe('when there is initially one user at db', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(helper.initialBlogs)
+})
 
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
-
-    await user.save()
+describe('when there is initially some blogs saved', () => {
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
-  test('creation succeeds with a fresh username', async () => {
-    const usersAtStart = await helper.usersInDb()
+  test('identifier field is called id', async () => {
+    const response = await api.get('/api/blogs')
 
-    const newUser = {
-      username: 'mluukkai',
-      name: 'Matti Luukkainen',
-      password: 'salainen',
+    const fetchIds = response.body.map(r => r.id)
+
+    expect((fetchIds)).toBeDefined()
+  })
+})
+
+describe('addition of a new blog', () => {
+  test('length grows with one', async() => {
+    const newBlog = {
+      title: 'Keissiiiii',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 1,
     }
 
     await api
-      .post('/api/users')
-      .send(newUser)
+      .post('/api/blogs')
+      .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+    const blogsAtEnd = await helper.blogsInDb()
 
-    const usernames = usersAtEnd.map(u => u.username)
-    expect(usernames).toContain(newUser.username)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+    const titles = blogsAtEnd.map(n => n.title)
+    expect(titles).toContain('Keissiiiii')
+  })
+
+  test('set likes to zero if undefined', async() => {
+    const newBlog = {
+      title: 'Keissiiiii',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const lastElementLikes = blogsAtEnd[blogsAtEnd.length - 1].likes
+
+    expect(lastElementLikes).toBe(0)
+  })
+
+  test('fails if missing fields title and url', async() => {
+    const newBlog = {
+      author: 'Juse'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
   })
 })
 
