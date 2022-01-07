@@ -1,9 +1,10 @@
-POST http://localhost:3001/api/blogs HTTP/1.1
+POST http://localhost:3001/api/blogs
 content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVuaWlra2luaW1pIiwiaWQiOiI2MWQ4NGQ0YWY3ZGIzNzllMjhiMDAzZmMiLCJpYXQiOjE2NDE1NjYyOTZ9.Tq0NODIJpvauHeslY18p3x1PqPJCu_1HzsoELy4Lpak
 
 {
-    "title": "Hyvä juttuuuu",
-    "author": "Juuso",
-    "url": "Joku url",
+    "title": "uniikin juttu",
+    "author": "uniikkiloool",
+    "url": "www.keissi.com",
     "likes": 25
 }
