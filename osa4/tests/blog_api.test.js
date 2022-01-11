@@ -4,10 +4,25 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
 const api = supertest(app)
+const User = require('../models/user')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+
+  await User.deleteMany({})
+
+  const newUser = {
+    username: 'maino',
+    name: 'mainio luukku',
+    password: 'salainen',
+  }
+
+  await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
 })
 
 describe('when there is initially some blogs saved', () => {
@@ -27,6 +42,7 @@ describe('when there is initially some blogs saved', () => {
 
 describe('addition of a new blog', () => {
   test('length grows with one', async() => {
+    await helper.usersInDb
     const newBlog = {
       title: 'Keissiiiii',
       author: 'Edsger W. Dijkstra',
@@ -34,8 +50,19 @@ describe('addition of a new blog', () => {
       likes: 1,
     }
 
+    const loginCredentials = {
+      username: 'maino',
+      password: 'salainen'
+    }
+
+    const loginResp = await api
+      .post('/api/login')
+      .send(loginCredentials)
+      .expect(200)
+
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginResp.body.token.toString()}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -55,8 +82,19 @@ describe('addition of a new blog', () => {
       url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     }
 
+    const loginCredentials = {
+      username: 'maino',
+      password: 'salainen'
+    }
+
+    const loginResp = await api
+      .post('/api/login')
+      .send(loginCredentials)
+      .expect(200)
+
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginResp.body.token.toString()}`)
       .send(newBlog)
       .expect(200)
 
@@ -67,15 +105,42 @@ describe('addition of a new blog', () => {
   })
 
   test('fails if missing fields title and url', async() => {
+
+    const loginCredentials = {
+      username: 'maino',
+      password: 'salainen'
+    }
+
+    const loginResp = await api
+      .post('/api/login')
+      .send(loginCredentials)
+      .expect(200)
+
     const newBlog = {
       author: 'Juse'
     }
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginResp.body.token.toString()}`)
       .send(newBlog)
       .expect(400)
   })
+
+  test('fails if there is not token', async() => {
+    const newBlog = {
+      title: 'Keissiiiii',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 1,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+  })
+
 })
 
 afterAll(() => {
