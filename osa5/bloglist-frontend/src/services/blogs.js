@@ -9,7 +9,7 @@ const setToken = newToken => {
 
 const getAll = () => {
   const req = axios.get(baseUrl)
-  return req.then(res=> res.data)
+  return req.then(res => res.data)
 }
 
 const create = async newObject => {
@@ -33,5 +33,4 @@ const _delete = async (id) => {
   return req.data
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, setToken, create, update, _delete }

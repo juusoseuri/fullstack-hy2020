@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
-const Blog = ({blog, handleLike, handleRemoval}) => {
+const Blog = ({ blog, handleLike, handleRemoval }) => {
   const [blogVisible, setBlogVisible] = useState(false)
-  const showWhenVisible = { display: blogVisible ? '' : 'none'}
+  const showWhenVisible = { display: blogVisible ? '' : 'none' }
 
 
   const blogStyle = {
@@ -10,7 +10,7 @@ const Blog = ({blog, handleLike, handleRemoval}) => {
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5    
+    marginBottom: 5
   }
 
   const toggleVisibility = () => {
@@ -32,7 +32,7 @@ const Blog = ({blog, handleLike, handleRemoval}) => {
         <button onClick={() => setBlogVisible(true)}>view</button>
       </div>
 
-    ) 
+    )
   }
 
   return(
@@ -50,7 +50,7 @@ const Blog = ({blog, handleLike, handleRemoval}) => {
         <button onClick={handleRemoval}>remove</button>
       </div>
     </div>
-  )  
+  )
 }
 
 export default Blog
