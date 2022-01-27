@@ -23,9 +23,10 @@ const App = () => {
 
   // Gets all the blogs
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    blogService.getAll().then(blogs => {
+      const sorted = blogs.sort((firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes)
+      setBlogs( sorted )
+    })
   }, [])
 
   // Gets the user from window.localStorage
@@ -97,7 +98,8 @@ const App = () => {
 
     try {
       const returnedBlog = await blogService.update(id, changedBlog)
-      setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      const newBlogs = blogs.map(blog => blog.id !== id ? blog : returnedBlog)
+      setBlogs(newBlogs.sort((first, second) => second.likes - first.likes))
     } catch (exception) {
       setErrorMessage(
         `Blog '${blog.title}' was already removed from server`
