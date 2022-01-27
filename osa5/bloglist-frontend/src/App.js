@@ -90,6 +90,24 @@ const App = () => {
     await window.localStorage.removeItem('loggedBlogappUser')
   }
 
+  // Handles new likes
+  const handleLike = async (id) => {
+    const blog = blogs.find(n => n.id === id)
+    const changedBlog = {...blog, likes: blog.likes + 1}
+
+    try {
+      const returnedBlog = await blogService.update(id, changedBlog)
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+    } catch (exception) {
+      setErrorMessage(
+        `Blog '${blog.title}' was already removed from server`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
   return(    
     <div>
       <h2>Blogs</h2>
@@ -114,7 +132,7 @@ const App = () => {
           {blogForm()}
           <br/>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} handleLike={() => handleLike(blog.id)}/>
           )}
         </div>    
       }
