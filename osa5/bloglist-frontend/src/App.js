@@ -87,6 +87,7 @@ const App = () => {
 
   // Handles the logout event
   const handleLogout = async (event) => {
+    event.preventDefault()
     console.log('logging out')
     await window.localStorage.removeItem('loggedBlogappUser')
   }
@@ -95,11 +96,12 @@ const App = () => {
   const handleLike = async (id) => {
     const blog = blogs.find(n => n.id === id)
     const changedBlog = {...blog, likes: blog.likes + 1}
-    console.log('id', id)
     try {
-      const returnedBlog = await blogService.update(id, changedBlog)
-      const newBlogs = blogs.map(blog => blog.id !== id ? blog : returnedBlog)
-      setBlogs(newBlogs.sort((first, second) => second.likes - first.likes))
+      await blogService.update(id, changedBlog)
+      blogService.getAll().then(blogs => {
+        const sorted = blogs.sort((firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes)
+        setBlogs( sorted )
+      })
     } catch (exception) {
       setErrorMessage(
         `Blog '${blog.title}' was already removed from server`
