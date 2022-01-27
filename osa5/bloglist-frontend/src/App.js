@@ -95,7 +95,7 @@ const App = () => {
   const handleLike = async (id) => {
     const blog = blogs.find(n => n.id === id)
     const changedBlog = {...blog, likes: blog.likes + 1}
-
+    console.log('id', id)
     try {
       const returnedBlog = await blogService.update(id, changedBlog)
       const newBlogs = blogs.map(blog => blog.id !== id ? blog : returnedBlog)
@@ -107,6 +107,23 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
+    }
+  }
+
+  // Handles removal of a blog 
+  const handleRemoval = async (id) => {
+    const blog = blogs.find(n => n.id === id)
+    if (window.confirm(`Delete blog: ${blog.title}`)) {
+      console.log('Blog deleted', {blog})
+      const returned = await blogService._delete(id)
+      console.log('returned', returned)
+      setMessage(
+        `${blog.title} has been deleted`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+      setBlogs(blogs => blogs.filter(n => n.id !== id))
     }
   }
 
@@ -134,7 +151,10 @@ const App = () => {
           {blogForm()}
           <br/>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} handleLike={() => handleLike(blog.id)}/>
+            <Blog key={blog.id} 
+                  blog={blog} 
+                  handleLike={() => handleLike(blog.id)}
+                  handleRemoval={() => handleRemoval(blog.id)}/>
           )}
         </div>    
       }
