@@ -54,6 +54,7 @@ const App = () => {
     }, 5000)
   }
 
+  // Component for adding the form of adding new blogs
   const blogForm = () => (
     <Togglable buttonLabel={'create new blog'} ref={blogFormRef}>
       <BlogForm

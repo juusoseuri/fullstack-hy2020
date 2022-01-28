@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 
 const Blog = ({ blog, handleLike, handleRemoval }) => {
   const [blogVisible, setBlogVisible] = useState(false)
-  const showWhenVisible = { display: blogVisible ? '' : 'none' }
 
 
   const blogStyle = {
@@ -17,7 +16,7 @@ const Blog = ({ blog, handleLike, handleRemoval }) => {
     blogVisible ? setBlogVisible(false) : setBlogVisible(true)
   }
 
-  const Button = () => {
+  const BlogHeading = () => {
     if (blogVisible) {
       return (
         <div>
@@ -35,19 +34,29 @@ const Blog = ({ blog, handleLike, handleRemoval }) => {
     )
   }
 
+
+  if (blogVisible) {
+    return(
+      <div style={blogStyle}>
+        <div onClick={() => toggleVisibility()}>
+          <BlogHeading/>
+        </div>
+        <div>
+          <div>{blog.url}</div>
+          <div>{blog.user.name}</div>
+          <div>
+            Likes {blog.likes}
+            <button onClick={handleLike}>like</button>
+          </div>
+          <button onClick={handleRemoval}>remove</button>
+        </div>
+      </div>
+    )
+  }
   return(
     <div style={blogStyle}>
       <div onClick={() => toggleVisibility()}>
-        <Button/>
-      </div>
-      <div style={showWhenVisible}>
-        <div>{blog.url}</div>
-        <div>{blog.user.name}</div>
-        <div>
-          Likes {blog.likes}
-          <button onClick={handleLike}>like</button>
-        </div>
-        <button onClick={handleRemoval}>remove</button>
+        <BlogHeading/>
       </div>
     </div>
   )
