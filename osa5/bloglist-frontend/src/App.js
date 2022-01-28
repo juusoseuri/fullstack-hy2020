@@ -11,8 +11,8 @@ import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('uniikkinimi')
-  const [password, setPassword] = useState('salasana')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const [message, setMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
