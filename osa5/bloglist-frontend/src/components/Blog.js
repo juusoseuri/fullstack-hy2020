@@ -37,7 +37,7 @@ const Blog = ({ blog, handleLike, handleRemoval }) => {
 
   if (blogVisible) {
     return(
-      <div style={blogStyle}>
+      <div style={blogStyle} className='blog'>
         <div onClick={() => toggleVisibility()}>
           <BlogHeading/>
         </div>
@@ -54,7 +54,7 @@ const Blog = ({ blog, handleLike, handleRemoval }) => {
     )
   }
   return(
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <div onClick={() => toggleVisibility()}>
         <BlogHeading/>
       </div>
