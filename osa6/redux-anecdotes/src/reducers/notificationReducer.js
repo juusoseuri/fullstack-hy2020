@@ -22,13 +22,18 @@ const reducer = (state = initialState, action) => {
   } 
 }
 
-export const showMessage = (message) => {
-  return {
-    type: 'SHOW',
-    data: {
-      message: message,
-      show: true
-    }
+export const showMessage = (message, time) => {
+  return async dispatch => {
+    dispatch({
+      type: 'SHOW',
+      data: {
+        message: message,
+        show: true
+      }
+    })
+    setTimeout(() => {
+      dispatch({ type: 'HIDE' })
+    }, 1000 * time)
   }
 }
 
