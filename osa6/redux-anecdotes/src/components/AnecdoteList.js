@@ -18,7 +18,6 @@ const AnecdoteList = () => {
       dispatch(hideMessage())
     }, 5000)
   }
-
   return (
     <div>
       <h2>Anecdotes</h2>

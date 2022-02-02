@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 const Notification = () => {
   const message = useSelector(state => state.notification.message)
   const show = useSelector(state => state.notification.show)
-  console.log('message', message)
   const style = {
     border: 'solid',
     padding: 10,

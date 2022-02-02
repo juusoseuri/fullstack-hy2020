@@ -4,8 +4,6 @@ const initialState = {
 }
 
 const reducer = (state = initialState, action) => {
-  console.log(action)
-  console.log('state', state)
   switch (action.type) {
     case 'SHOW':
       const show = {
