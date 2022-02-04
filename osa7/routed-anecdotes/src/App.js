@@ -6,14 +6,12 @@ import {
   Route, 
   Link,
   Redirect,
-  useParams
+  useParams,
+  useRouteMatch
 } from 'react-router-dom'
 
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id
-  console.log('id', id)
-  const anecdote = anecdotes.find(n => n.id === id)
-  console.log('anecdote', anecdote)
+
+const Anecdote = ({ anecdote }) => {
   return (
     <div>
       <h2>{anecdote.content}</h2>
@@ -25,18 +23,20 @@ const Anecdote = ({ anecdotes }) => {
   )
 }
 
-const AnecdoteList = ({ anecdotes }) => (
-  <div>
-    <h2>Anecdotes</h2>
-      <ul>
-        {anecdotes.map(anecdote => 
-          <li key={anecdote.id} >
-            <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-          </li>
-        )}
-      </ul>
-  </div>
-)
+const AnecdoteList = (props) => {
+  return (
+    <div>
+      <h2>Anecdotes</h2>
+        <ul>
+          {props.anecdotes.map(anecdote => 
+            <li key={anecdote.id} >
+              <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+            </li>
+          )}
+        </ul>
+    </div>
+  )
+}
 
 
 const About = () => (
@@ -119,10 +119,17 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
+  const [showAnecdotes, setShowAnecdotes] = useState(false)
 
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setShowAnecdotes(true)
+    setTimeout(() => {
+      setShowAnecdotes(false)
+      setNotification('')
+    }, 5000)
   }
 
   const anecdoteById = (id) =>
@@ -143,32 +150,51 @@ const App = () => {
     paddingRight: 5
   }
 
+  const Notification = () => {
+    if (notification !== '') {
+      return (
+        <div>{notification}</div>
+      )
+    } else {
+      return (
+        <div></div>
+      )
+    }
+  }
+
+  const match = useRouteMatch('/anecdotes/:id')
+  const anecdote = match 
+    ? anecdotes.find(n => n.id === match.params.id)
+    : null
+
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Router>
         <div>
           <Link style={padding} to='/anecdotes'>anecdotes</Link>
           <Link style={padding} to='/create'>create new</Link>
           <Link style={padding} to='/about'>about</Link>
         </div>
-
+        <Notification/>
         <Switch>
           <Route path='/anecdotes/:id'>
-            <Anecdote anecdotes={anecdotes}/>
+            <Anecdote anecdote={anecdote}/>
           </Route>
           <Route path='/about'>
             <About />
           </Route>
           <Route path='/create'>
-            <CreateNew addNew={addNew} />
+            { showAnecdotes ? 
+              <Redirect to='/anecdotes'/> : 
+              <CreateNew addNew={addNew}/>
+            }
           </Route>
           <Route path='/anecdotes'>
-            <AnecdoteList anecdotes={anecdotes} />
+            <AnecdoteList anecdotes={anecdotes}/>
           </Route>
         </Switch>
+
         <Footer />
-      </Router>
     </div>
   )
 }
