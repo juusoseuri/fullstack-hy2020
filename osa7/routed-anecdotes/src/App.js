@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
+import { useField } from './hooks'
 
 import {
-  BrowserRouter as Router, 
   Switch, 
   Route, 
   Link,
   Redirect,
-  useParams,
   useRouteMatch
 } from 'react-router-dom'
 
@@ -61,18 +60,36 @@ const Footer = () => (
   </div>
 )
 
-const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+const InputField = (props) => {
+  const { reset, ...other } = props.field
 
+  return (
+    <div>
+      {props.text}
+      <input {...other}/>
+    </div>
+  )
+}
+
+const CreateNew = (props) => {
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
+
+  console.log('content', {...content.value})
+  const reset = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    console.log('content on submit', content)
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
   }
@@ -80,21 +97,13 @@ const CreateNew = (props) => {
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
-        </div>
-        <div>
-          author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
-        </div>
-        <div>
-          url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
-        </div>
-        <button>create</button>
+      <form>
+        <InputField field={content} text={'content'}/>
+        <InputField field={author} text={'author'}/>
+        <InputField field={info} text={'info'}/>
       </form>
+      <button onClick={handleSubmit}>create</button>
+      <button onClick={reset}>reset</button>
     </div>
   )
 
@@ -190,6 +199,9 @@ const App = () => {
             }
           </Route>
           <Route path='/anecdotes'>
+            <AnecdoteList anecdotes={anecdotes}/>
+          </Route>
+          <Route path='/'>
             <AnecdoteList anecdotes={anecdotes}/>
           </Route>
         </Switch>
