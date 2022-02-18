@@ -4,32 +4,28 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import Notification from './components/Notification'
-import Error from './components/Error'
+import Header from './components/Header'
 import Togglable from './components/Togglable'
 import './index.css'
+import { useDispatch, useSelector } from 'react-redux'
+import { showErrorMessage, showMessage } from './reducers/notificationReducer'
+import { createBlog, initBlogs, removeBlog, voteBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => state.blogs)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
-  const [message, setMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
 
   const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
 
+  const dispatch = useDispatch()
+
   // Gets all the blogs
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      const sorted = blogs.sort(
-        (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes
-      )
-      setBlogs(sorted)
-    })
-  }, [])
+    dispatch(initBlogs())
+  }, [dispatch])
 
   // Gets the user from window.localStorage
   useEffect(() => {
@@ -44,14 +40,8 @@ const App = () => {
   // Adds a new blog to the data base and the frontend list
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
-
-    blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog))
-    })
-    setMessage(`A new blog: ${blogObject.title} by ${blogObject.author} added!`)
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
+    dispatch(createBlog(blogObject))
+    dispatch(showMessage(`A new blog: ${blogObject.title} by ${blogObject.author} added!`, 3))
   }
 
   // Component for adding the form of adding new blogs
@@ -75,10 +65,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong username or password!')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(showErrorMessage('Wrong username or password!', 3))
       console.log('exception:', exception)
     }
   }
@@ -95,18 +82,9 @@ const App = () => {
     const blog = blogs.find((n) => n.id === id)
     const changedBlog = { ...blog, likes: blog.likes + 1 }
     try {
-      await blogService.update(id, changedBlog)
-      blogService.getAll().then((blogs) => {
-        const sorted = blogs.sort(
-          (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes
-        )
-        setBlogs(sorted)
-      })
+      dispatch(voteBlog(changedBlog))
     } catch (exception) {
-      setErrorMessage(`Blog '${blog.title}' was already removed from server`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(showErrorMessage(`Blog '${blog.title}' was already removed from server`, 3))
     }
   }
 
@@ -115,23 +93,15 @@ const App = () => {
     const blog = blogs.find((n) => n.id === id)
     if (window.confirm(`Delete blog: ${blog.title}`)) {
       console.log('Blog deleted', { blog })
-      const returned = await blogService._delete(id)
-      console.log('returned', returned)
-      setMessage(`${blog.title} has been deleted`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-      setBlogs((blogs) => blogs.filter((n) => n.id !== id))
+      await dispatch(removeBlog(id))
+      dispatch(showMessage(`${blog.title} has been deleted`, 3))
     }
   }
 
   return (
     <div>
-      <h2>Blogs</h2>
 
-      <Notification message={message} />
-      <Error message={errorMessage} />
-
+      <Header/>
       {user === null ? (
         <LoginForm
           handleLogin={handleLogin}
