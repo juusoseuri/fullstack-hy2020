@@ -13,12 +13,12 @@ const Togglable = React.forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => {
     return {
-      toggleVisibility
+      toggleVisibility,
     }
   })
 
   Togglable.propTypes = {
-    buttonLabel: propTypes.string.isRequired
+    buttonLabel: propTypes.string.isRequired,
   }
   return (
     <div>

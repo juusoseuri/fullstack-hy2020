@@ -7,22 +7,24 @@ const LoginForm = (props) => (
       <div>
         Username
         <input
-          type='text'
+          type="text"
           value={props.username}
-          id='username'
+          id="username"
           onChange={({ target }) => props.setUsername(target.value)}
         />
       </div>
       <div>
         Password
         <input
-          type='text'
+          type="text"
           value={props.password}
-          id='password'
+          id="password"
           onChange={({ target }) => props.setPassword(target.value)}
         />
       </div>
-      <button type="submit" id='loginButton'>login</button>
+      <button type="submit" id="loginButton">
+        login
+      </button>
     </form>
   </div>
 )

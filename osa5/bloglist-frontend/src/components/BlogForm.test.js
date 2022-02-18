@@ -6,9 +6,7 @@ import BlogForm from './BlogForm'
 test('Form works correctly and calls with corrct parameters onSubmit', async () => {
   const createBlog = jest.fn()
 
-  const component = render(
-    <BlogForm createBlog={createBlog}/>
-  )
+  const component = render(<BlogForm createBlog={createBlog} />)
 
   const title = component.container.querySelector('#title')
   const author = component.container.querySelector('#author')
@@ -16,13 +14,13 @@ test('Form works correctly and calls with corrct parameters onSubmit', async () 
   const form = component.container.querySelector('form')
 
   fireEvent.change(title, {
-    target: { value :'example title' }
+    target: { value: 'example title' },
   })
   fireEvent.change(author, {
-    target: { value: 'example author' }
+    target: { value: 'example author' },
   })
   fireEvent.change(url, {
-    target: { value: 'example url' }
+    target: { value: 'example url' },
   })
   fireEvent.submit(form)
 

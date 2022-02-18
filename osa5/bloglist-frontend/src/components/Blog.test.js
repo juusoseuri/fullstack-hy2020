@@ -10,36 +10,32 @@ const blog = {
   likes: 0,
   user: {
     username: 'Meitsi',
-    name: 'Meitsi'
-  }
+    name: 'Meitsi',
+  },
 }
 
 test('renders the blogs correctly', () => {
+  const component = render(<Blog blog={blog} />)
 
-  const component = render(
-    <Blog blog={blog}/>
+  expect(component.container).toHaveTextContent(
+    'Uusi blogaus by Kirjoittaja Kimmoview'
   )
-
-  expect(component.container).toHaveTextContent('Uusi blogaus by Kirjoittaja Kimmoview')
 })
 
 test('clicking the button displays the blog correctly', async () => {
-
-  const component = render(
-    <Blog blog={blog}/>
-  )
+  const component = render(<Blog blog={blog} />)
 
   const button = component.getByText('view')
   fireEvent.click(button)
-  expect(component.container).toHaveTextContent('Uusi blogaus by Kirjoittaja Kimmohidewww.blog.fiMeitsiLikes 0likeremove')
+  expect(component.container).toHaveTextContent(
+    'Uusi blogaus by Kirjoittaja Kimmohidewww.blog.fiMeitsiLikes 0likeremove'
+  )
 })
 
 test('clicking the like button twice eventhandler is called two times', async () => {
   const mockHandler = jest.fn()
 
-  const component = render(
-    <Blog blog={blog} handleLike={mockHandler}/>
-  )
+  const component = render(<Blog blog={blog} handleLike={mockHandler} />)
 
   const viewButton = component.getByText('view')
   fireEvent.click(viewButton)

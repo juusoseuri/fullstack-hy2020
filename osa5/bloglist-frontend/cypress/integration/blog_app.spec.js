@@ -1,21 +1,21 @@
-describe('Blog app', function() {
-  beforeEach(function() {
+describe('Blog app', function () {
+  beforeEach(function () {
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
     const user = {
       name: 'testiukko',
       username: 'tukko',
-      password: 'salainen'
+      password: 'salainen',
     }
     cy.request('POST', 'http://localhost:3001/api/users', user)
     cy.visit('http://localhost:3000')
   })
 
-  it('Login form is shown', function() {
+  it('Login form is shown', function () {
     cy.contains('Log in to the application')
   })
 
-  describe('Login', function() {
-    it('succeeds with corrent credentials', function() {
+  describe('Login', function () {
+    it('succeeds with corrent credentials', function () {
       cy.get('#username').type('tukko')
       cy.get('#password').type('salainen')
       cy.get('#loginButton').click()
@@ -23,7 +23,7 @@ describe('Blog app', function() {
       cy.contains('testiukko logged in')
     })
 
-    it('fails with wrong credentials', function() {
+    it('fails with wrong credentials', function () {
       cy.get('#username').type('tukko')
       cy.get('#password').type('väärä')
       cy.get('#loginButton').click()
@@ -32,12 +32,12 @@ describe('Blog app', function() {
     })
   })
 
-  describe('When logged in', function() {
-    beforeEach(function() {
+  describe('When logged in', function () {
+    beforeEach(function () {
       cy.login({ username: 'tukko', password: 'salainen' })
     })
 
-    it('A blog can be created', function() {
+    it('A blog can be created', function () {
       cy.contains('create new blog').click()
       cy.get('#title').type('Uusi blogi')
       cy.get('#author').type('Meikäpoika')
@@ -46,28 +46,40 @@ describe('Blog app', function() {
       cy.contains('Uusi blogi by Meikäpoika')
     })
 
-    describe('and a blog exists', function() {
-      describe('and several notes exist', function() {
-        beforeEach(function() {
-          cy.createBlog({ title: 'Eka Blogi', author: 'minä', url: 'www.juuso.fi' })
-          cy.createBlog({ title: 'Toka Blogi', author: 'minä', url: 'www.juuso.fi' })
-          cy.createBlog({ title: 'Kolmas Blogi', author: 'minä', url: 'www.juuso.fi' })
+    describe('and a blog exists', function () {
+      describe('and several notes exist', function () {
+        beforeEach(function () {
+          cy.createBlog({
+            title: 'Eka Blogi',
+            author: 'minä',
+            url: 'www.juuso.fi',
+          })
+          cy.createBlog({
+            title: 'Toka Blogi',
+            author: 'minä',
+            url: 'www.juuso.fi',
+          })
+          cy.createBlog({
+            title: 'Kolmas Blogi',
+            author: 'minä',
+            url: 'www.juuso.fi',
+          })
         })
 
-        it('A blog can be liked', function() {
+        it('A blog can be liked', function () {
           cy.contains('Eka Blogi').click()
           cy.contains('Likes 0')
           cy.contains('like').click()
           cy.contains('Likes 1')
         })
 
-        it('A blog can be deleted', function() {
+        it('A blog can be deleted', function () {
           cy.contains('Toka Blogi').click()
           cy.contains('remove').click()
           cy.contains('Toka Blogi by minä').should('not.exist')
         })
 
-        it('The blogs are in correct order', function() {
+        it('The blogs are in correct order', function () {
           cy.contains('Toka Blogi').click()
           cy.contains('like').click()
           cy.contains('Likes 1')

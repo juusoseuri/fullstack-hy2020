@@ -3,13 +3,12 @@ import React, { useState } from 'react'
 const Blog = ({ blog, handleLike, handleRemoval }) => {
   const [blogVisible, setBlogVisible] = useState(false)
 
-
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   const toggleVisibility = () => {
@@ -30,16 +29,14 @@ const Blog = ({ blog, handleLike, handleRemoval }) => {
         {blog.title} by {blog.author}
         <button onClick={() => setBlogVisible(true)}>view</button>
       </div>
-
     )
   }
 
-
   if (blogVisible) {
-    return(
-      <div style={blogStyle} className='blog'>
+    return (
+      <div style={blogStyle} className="blog">
         <div onClick={() => toggleVisibility()}>
-          <BlogHeading/>
+          <BlogHeading />
         </div>
         <div>
           <div>{blog.url}</div>
@@ -53,10 +50,10 @@ const Blog = ({ blog, handleLike, handleRemoval }) => {
       </div>
     )
   }
-  return(
-    <div style={blogStyle} className='blog'>
+  return (
+    <div style={blogStyle} className="blog">
       <div onClick={() => toggleVisibility()}>
-        <BlogHeading/>
+        <BlogHeading />
       </div>
     </div>
   )
