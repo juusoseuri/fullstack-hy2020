@@ -34,6 +34,7 @@ const BlogList = () => {
       dispatch(showMessage(`${blog.title} has been deleted`, 3))
     }
   }
+
   return (
     <div>
       <br/>

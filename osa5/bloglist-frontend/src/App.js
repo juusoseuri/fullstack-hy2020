@@ -6,7 +6,17 @@ import Header from './components/Header'
 import './index.css'
 import { showErrorMessage } from './reducers/notificationReducer'
 import BlogList from './components/BlogList/BlogList'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import Users from './components/Users/Users'
+import User from './components/Users/User/User'
+import Navigation from './components/Navigation'
+import { initBlogs } from './reducers/blogReducer'
+
+import {
+  Routes,
+  Route,
+  useMatch
+} from 'react-router-dom'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -16,6 +26,23 @@ const App = () => {
 
   const dispatch = useDispatch()
 
+  // Get the blogs
+  const blogs = useSelector(state => state.blogs)
+  useEffect(() => {
+    dispatch(initBlogs())
+  }, [dispatch])
+
+  // Handle the formatting for the page users
+  const users = blogs.map(blog => blog.user)
+  const uniques = [...new Set(users.map(item => item.username))]
+  const usersAndBlogCount = uniques.map(user => {
+    const container = {}
+    container['username'] = user
+    container['name'] = users.find(n => user === n.username).name
+    container['blogCount'] = blogs.filter(blog => blog.user.username === user).length
+    container['id'] = users.find(n => user === n.username).id
+    return container
+  })
 
   // Gets the user from window.localStorage
   useEffect(() => {
@@ -53,6 +80,11 @@ const App = () => {
     await window.localStorage.removeItem('loggedBlogappUser')
   }
 
+  const match = useMatch('/users/:id')
+  const matchUser = match
+    ? usersAndBlogCount.find(user => user.id === match.params.id)
+    : null
+
   return (
     <div>
       <Header/>
@@ -66,11 +98,12 @@ const App = () => {
         />
       ) : (
         <div>
-          <div>
-            {user.name} logged in
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-          <BlogList/>
+          <Navigation user={user} handleLogout={handleLogout}/>
+          <Routes>
+            <Route path='/' element={<BlogList/>}/>
+            <Route path='/users/:id' element={<User user={matchUser} blogs={blogs}/>}/>
+            <Route path='/users' element={<Users usersAndBlogCount={usersAndBlogCount}/>}/>
+          </Routes>
         </div>
       )}
     </div>

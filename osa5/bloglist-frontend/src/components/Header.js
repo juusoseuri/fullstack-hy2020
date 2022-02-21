@@ -5,9 +5,9 @@ import Error from './Error'
 const Header = () => {
   return (
     <div>
-      <h2>Blogs</h2>
       <Notification/>
       <Error/>
+      <h2>Blogs</h2>
     </div>
   )
 }
